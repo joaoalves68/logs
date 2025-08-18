@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libfreetype6-dev
 
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
