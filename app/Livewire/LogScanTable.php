@@ -13,7 +13,7 @@ class LogScanTable extends DataTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
-        $this->setTheme('tailwind');
+        $this->setColumnSelectDisabled();
     }
 
     public function columns(): array
