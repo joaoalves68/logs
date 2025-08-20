@@ -11,7 +11,7 @@
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrar Novos Dados</h3>
 
-                    <x-error-bubble/>
+                    <x-alert-bubble/>
 
                     <form action="{{ route('log.store') }}" method="POST" enctype="multipart/form-data"
                         class="space-y-6">
