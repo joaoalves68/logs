@@ -12,7 +12,6 @@ class LogScan extends Model
         'path'
     ];
 
-
     protected static function booted()
     {
         static::creating(function ($model) {
