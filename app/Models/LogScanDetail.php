@@ -19,7 +19,19 @@ class LogScanDetail extends Model
         'timestamp',
         'domain',
         'client_ip',
+        'classification',
+        'analysis_reason',
     ];
+
+    public function getClassificationLabelAttribute(): ?string
+    {
+        return match ($this->classification) {
+            1 => 'Malicioso',
+            2 => 'Moderado',
+            3 => 'Seguro',
+            default => null,
+        };
+    }
 
     public function logScan(): BelongsTo
     {
