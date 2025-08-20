@@ -13,7 +13,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::post('/log', [LogScanController::class, 'store'])->name('log.store');
-    Route::get('/log/{log}/show', [LogScanController::class, 'show'])->name('log.show');
+    Route::get('/log/{log?}', [LogScanController::class, 'show'])->name('log.show');
 });
 
 Route::middleware('auth')->group(function () {

@@ -52,6 +52,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 text-gray-900">
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Últimos Logs registrados</h3>
+
                     <livewire:log-scan-table />
                 </div>
             </div>

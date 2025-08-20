@@ -38,8 +38,12 @@ class LogScanController extends Controller
         return redirect()->back()->with('success', 'Dados e arquivo registrados com sucesso!');
     }
 
-    public function show(LogScan $log)
+    public function show(?LogScan $log = null)
     {
-        dd($log);
+        if($log) {
+            $log->load('details');
+        }
+
+        return view('logs.show', compact('log'));
     }
 }
