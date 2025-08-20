@@ -19,10 +19,6 @@ class LogScanTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make("ID", "id")
-                ->sortable()
-                ->searchable(),
-
             Column::make("Nome", "name")
                 ->sortable()
                 ->searchable(),

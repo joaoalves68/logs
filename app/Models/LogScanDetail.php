@@ -2,23 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
-class LogScan extends Model
+class LogScanDetail extends Model
 {
+    use HasFactory;
+
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'name',
-        'path'
+        'log_scan_id',
+        'timestamp',
+        'domain',
+        'client_ip',
     ];
 
-    public function details(): HasMany
+    public function logScan(): BelongsTo
     {
-        return $this->hasMany(LogScanDetail::class);
+        return $this->belongsTo(LogScan::class);
     }
 
     protected static function booted()

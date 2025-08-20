@@ -22,7 +22,11 @@ class LogScanRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                'mimes:txt',
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with($value->getClientOriginalName(), '.txt')) {
+                        $fail('Apenas arquivos .txt são permitidos.');
+                    }
+                },
                 'max:2048',
             ],
         ];
@@ -37,7 +41,7 @@ class LogScanRequest extends FormRequest
 
             'file.required' => 'O campo arquivo é obrigatório.',
             'file.file' => 'O campo arquivo deve ser um arquivo.',
-            'file.mimes' => 'Apenas arquivos do tipo TXT são permitidos.',
+            'file.mimes' => 'Apenas arquivos .txt são permitidos.',
             'file.max' => 'O arquivo não pode ser maior que 2 MB.',
         ];
     }
