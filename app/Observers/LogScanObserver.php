@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\LogScan;
 use App\Services\LogFileProcessorService;
-use App\Services\LogScanOpenAIService;
+use App\Jobs\ProcessLogScanAnalysis;
 use Illuminate\Support\Facades\Log;
 
 class LogScanObserver
@@ -14,15 +14,12 @@ class LogScanObserver
         try {
             $fileProcessorService = new LogFileProcessorService();
             $fileProcessorService->processFile($logScan);
+            Log::info('Arquivo do LogScan ID ' . $logScan->id . ' processado com sucesso. Despachando Job para OpenAI.');
+
+            ProcessLogScanAnalysis::dispatch($logScan);
+
         } catch (\Exception $e) {
             Log::error('Erro ao processar arquivo do LogScan ID ' . $logScan->id . ': ' . $e->getMessage());
-        }
-
-        try {
-            $scanOpenAIService = new LogScanOpenAIService();
-            $scanOpenAIService->processLog($logScan);
-        } catch (\Exception $e) {
-            Log::error('Erro ao processar detalhes do LogScan ID ' . $logScan->id . ': ' . $e->getMessage());
         }
     }
 }
