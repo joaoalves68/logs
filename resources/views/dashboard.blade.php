@@ -10,15 +10,9 @@
             <div class="p-6 text-gray-900">
                 <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Registrar Novos Dados</h3>
-                    @if ($errors->any())
-                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                            <ul class="list-disc list-inside">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+
+                    <x-error-bubble/>
+
                     <form action="{{ route('log.store') }}" method="POST" enctype="multipart/form-data"
                         class="space-y-6">
                         @csrf
@@ -55,6 +49,5 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </x-app-layout>
