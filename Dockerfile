@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libjpeg-dev \
     libwebp-dev \
-    libfreetype6-dev
+    libfreetype6-dev\
+    netcat-traditional
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
