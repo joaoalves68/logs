@@ -6,7 +6,6 @@ use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\LogScanDetail;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 class LogDetailsTable extends DataTableComponent
 {
@@ -27,7 +26,7 @@ class LogDetailsTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        $query = LogScanDetail::query();
+        $query = $this->model::query();
 
         if ($this->logId) {
             $query->where('log_scan_id', $this->logId);

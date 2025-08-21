@@ -45,7 +45,7 @@ class LogScanController extends Controller
             $log->load('details');
         }
 
-        $resume = LogScan::generateResume($log);
+        $resume = LogScanDetail::generateResume($log);
 
         return view('logs.show', compact('log', 'resume'));
     }

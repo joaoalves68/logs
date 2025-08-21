@@ -35,6 +35,18 @@ class LogScanDetail extends Model
         };
     }
 
+    public static function generateResume(LogScan $log = null): array
+    {
+        $log = $log?->details ?: new self();
+
+        return [
+            'total_logs' => $log->count() ?? 0,
+            'malicious' => $log->where('classification', 1)->count() ?? 0,
+            'moderate' => $log->where('classification', 2)->count() ?? 0,
+            'safe' => $log->where('classification', 3)->count() ?? 0,
+        ];
+    }
+
     public function logScan(): BelongsTo
     {
         return $this->belongsTo(LogScan::class);

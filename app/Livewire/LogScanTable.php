@@ -6,7 +6,7 @@ use App\Models\LogScan;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
-
+use Illuminate\Database\Eloquent\Builder;
 class LogScanTable extends DataTableComponent
 {
     protected $model = LogScan::class;
@@ -19,6 +19,12 @@ class LogScanTable extends DataTableComponent
     {
         $this->setPrimaryKey('id');
         $this->setColumnSelectDisabled();
+    }
+
+
+    public function builder(): Builder
+    {
+        return $this->model::query()->orderBy('created_at', 'DESC');
     }
 
     public function columns(): array
