@@ -13,10 +13,6 @@ class LogScanTable extends DataTableComponent
 {
     protected $model = LogScan::class;
 
-    // Propriedades para o modal
-    public $selectedLog = null;
-    public $showModal = false;
-
     public function configure(): void
     {
         $this->setPrimaryKey('id');
