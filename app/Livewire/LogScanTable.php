@@ -7,6 +7,8 @@ use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
 use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\Views\Filters\DateFilter;
+
 class LogScanTable extends DataTableComponent
 {
     protected $model = LogScan::class;
@@ -44,6 +46,16 @@ class LogScanTable extends DataTableComponent
             LinkColumn::make('Ações')
                 ->title(fn($row) => 'Ver detalhes')
                 ->location(fn($row) => route('log.show', $row->id)),
+        ];
+    }
+
+    public function filters(): array
+    {
+        return [
+            DateFilter::make('Criado em', 'created_at')
+                ->filter(function(Builder $builder, string $value) {
+                    $builder->whereDate('created_at', $value);
+                }),
         ];
     }
 }

@@ -6,6 +6,8 @@ use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\LogScanDetail;
 use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
+use Rappasoft\LaravelLivewireTables\Views\Filters\DateFilter;
 
 class LogDetailsTable extends DataTableComponent
 {
@@ -95,6 +97,26 @@ class LogDetailsTable extends DataTableComponent
                 ->html(),
             Column::make("Cliente IP", "client_ip")
                 ->sortable(),
+        ];
+    }
+
+    public function filters(): array
+    {
+        return [
+            SelectFilter::make('Classificação', 'classification')
+                ->options([
+                    1 => 'Malicioso',
+                    2 => 'Moderado',
+                    3 => 'Seguro',
+                ])
+                ->filter(function(Builder $builder, $value) {
+                    $builder->where('classification', (string) $value);
+                }),
+
+            DateFilter::make('Criado em', 'timestamp')
+                ->filter(function(Builder $builder, string $value) {
+                    $builder->whereDate('timestamp', $value);
+                }),
         ];
     }
 }
