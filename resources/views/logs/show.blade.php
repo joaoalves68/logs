@@ -28,33 +28,42 @@
                         <p class="text-6xl font-extrabold text-gray-900 leading-none">{{ $resume['total_logs'] }}</p>
                     </div>
 
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-md flex flex-col items-center justify-center lg:col-span-2 transform transition duration-300 hover:scale-[1.02] hover:shadow-xl">
-                        <p class="text-sm uppercase tracking-wide font-semibold text-gray-500 mb-4">Percentual por Categoria</p>
-                        <div class="w-full h-64 flex justify-center items-center">
-                            <canvas id="doughnut-chart"></canvas>
+                    @if (
+                        isset($resume['safe']['count'], $resume['malicious']['count'], $resume['moderate']['count']) &&
+                        ($resume['safe']['count'] > 0 || $resume['malicious']['count'] > 0 || $resume['moderate']['count'] > 0)
+                    )
+                        <div class="bg-gray-50 p-6 rounded-2xl shadow-md flex flex-col items-center justify-center lg:col-span-2 transform transition duration-300 hover:scale-[1.02] hover:shadow-xl">
+                            <p class="text-sm uppercase tracking-wide font-semibold text-gray-500 mb-4">Percentual por Categoria</p>
+                            <div class="w-full h-64 flex justify-center items-center">
+                                <canvas id="doughnut-chart"></canvas>
+                            </div>
+                            <ul class="flex flex-wrap justify-center space-x-4 mt-6 text-sm font-medium">
+                                <li class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-1" style="background-color: #4ade80;"></span>Seguro
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-1" style="background-color: #f87171;"></span>Malicioso
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-1" style="background-color: #60a5fa;"></span>Neutro
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="flex flex-wrap justify-center space-x-4 mt-6 text-sm font-medium">
-                            <li class="flex items-center">
-                                <span class="w-2 h-2 rounded-full mr-1" style="background-color: #4ade80;"></span>Seguro
-                            </li>
-                            <li class="flex items-center">
-                                <span class="w-2 h-2 rounded-full mr-1" style="background-color: #f87171;"></span>Malicioso
-                            </li>
-                            <li class="flex items-center">
-                                <span class="w-2 h-2 rounded-full mr-1" style="background-color: #60a5fa;"></span>Neutro
-                            </li>
-                        </ul>
-                    </div>
+                    @endif
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-10">
-                    <p class="text-lg font-semibold text-gray-800 mb-4 text-center">Últimos 10 Domínios Maliciosos</p>
-                    <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
-                        @foreach ($resume['lastTenMalicious'] as $domain)
-                            <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">{{ $domain }}</span>
-                        @endforeach
+                @if (!empty($resume['lastTenMalicious']) && count($resume['lastTenMalicious']) > 0)
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-10">
+                        <p class="text-lg font-semibold text-gray-800 mb-4 text-center">Últimos 10 Domínios Maliciosos</p>
+                        <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
+                            @foreach ($resume['lastTenMalicious'] as $domain)
+                                <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">
+                                    {{ $domain }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Detalhes do Scan</h3>
                 <livewire:log-details-table :log-id="$log?->id" />
