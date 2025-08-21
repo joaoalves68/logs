@@ -9,7 +9,13 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
+    safelist: [
+        'bg-red-500',
+        'bg-red-600',
+        'bg-orange-600',
+        'bg-green-600',
+        'bg-gray-500',
+    ],
     theme: {
         extend: {
             fontFamily: {
