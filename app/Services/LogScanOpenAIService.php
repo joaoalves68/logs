@@ -24,30 +24,33 @@ class LogScanOpenAIService
                 'timestamp' => $detail->timestamp,
                 'domain' => $detail->domain,
                 'client_ip' => $detail->client_ip,
+                'whois_data' => $detail->extra ?? [],
             ];
         })->toJson(JSON_PRETTY_PRINT);
 
         $prompt = "Você é um analista de segurança. Sua tarefa é analisar a lista de registros de conexão abaixo.
-        Para cada registro, classifique a requisição com um número inteiro:
-        '1' para MALICIOSA,
-        '2' para MODERADA,
-        '3' para SEGURA.
-        Forneça também uma breve razão para a sua classificação.
-        Considere a reputação do domínio, padrões de nomes (ex: suspeitos, genéricos, phishing), e a reputação do IP do cliente (se tiver conhecimento).
-        Retorne sua análise em formato JSON, onde cada item da lista original (identificado pelo 'id' que eu forneço) deve conter a 'classification' (como número inteiro) e a 'analysis_reason' (como string).
+        Cada registro contém:
+        - domínio acessado
+        - IP do cliente
+        - informações de WHOIS/RDAP (em JSON dentro de 'whois_data')
 
-        Exemplo de formato de saída JSON:
+        Para cada registro, classifique a requisição com:
+        1 = MALICIOSA
+        2 = MODERADA
+        3 = SEGURA
+
+        Use como critérios:
+        - Reputação do domínio (se é conhecido, muito antigo ou suspeito)
+        - Reputação do IP do cliente (se tiver conhecimento)
+        - Dados de WHOIS/RDAP: idade do domínio, registrante, país, status (ex: clientTransferProhibited é comum em domínios legítimos), TLDs suspeitos (.ru, .xyz), uso de registrantes anônimos, etc.
+
+        Retorne sua análise em JSON, mantendo a estrutura:
         [
-            {
-                \"id\": \"<ID do Detalhe>\",
-                \"classification\": 3,
-                \"analysis_reason\": \"Domínio de rede social conhecido.\"
-            },
-            {
-                \"id\": \"<ID do Detalhe>\",
-                \"classification\": 1,
-                \"analysis_reason\": \"Domínio com TLD (.ru, .xyz, etc.) ou nome suspeito, pode estar associado a phishing/malware.\"
-            }
+        {
+            \"id\": \"<ID do detalhe>\",
+            \"classification\": <1|2|3>,
+            \"analysis_reason\": \"<breve razão baseada no domínio/IP/whois>\"
+        }
         ]
 
         Dados para análise:\n" . $logDataForPrompt;

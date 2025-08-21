@@ -49,6 +49,5 @@ class LogFileProcessorService
                 Log::warning('Formato de linha inválido no arquivo do LogScan ID ' . $logScan->id . ': ' . $line);
             }
         }
-        Log::info('Arquivo do LogScan ID ' . $logScan->id . ' processado com sucesso.');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\LogScanDetail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,16 +10,17 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Bus\Batchable;
 
 class ProcessWhoisApiRequest implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
-    protected string $domain;
+    protected LogScanDetail $logScanDetail;
 
-    public function __construct(string $domain)
+    public function __construct(LogScanDetail $logScanDetail)
     {
-        $this->domain = $domain;
+        $this->logScanDetail = $logScanDetail;
     }
 
     public function handle(): void
@@ -32,21 +34,41 @@ class ProcessWhoisApiRequest implements ShouldQueue
         }
 
         try {
+            $domain = $this->logScanDetail->domain;
+
             $response = Http::post($whoisApiUrl, [
-                'domainName' => $this->domain,
+                'domainName' => $domain,
                 'apiKey' => $whoisApiKey,
                 'outputFormat' => 'JSON'
             ]);
 
             if ($response->successful()) {
                 $data = $response->json();
-                Log::info('Dados Whois recebidos para o domínio ' . $this->domain . ':', $data);
-            } else {
-                Log::error('Falha na requisição Whois para ' . $this->domain . '. Status: ' . $response->status() . ' Resposta: ' . $response->body());
+
+                if (isset($data['WhoisRecord'])) {
+                    $whoisRecord = $data['WhoisRecord'];
+
+                    $simplifiedData = [
+                        'whois' => [
+                            'domain_age_days' => $whoisRecord['estimatedDomainAge'] ?? null,
+                            'creation_date' => $whoisRecord['createdDate'] ?? null,
+                            'expiration_date' => $whoisRecord['expiresDate'] ?? null,
+                            'status' => $whoisRecord['status'] ?? null,
+                            'name_servers' => $whoisRecord['nameServers']['hostNames'] ?? [],
+                            'registrant' => $whoisRecord['registrant'] ?? null
+                        ]
+                    ];
+
+                    $this->logScanDetail->extra = (object) $simplifiedData;
+                    $this->logScanDetail->save();
+                    Log::info('Dados Whois recebidos para o domínio ' . $domain . ':', (array) $simplifiedData);
+                } else {
+                    Log::error('Falha na requisição Whois para ' . $domain . '. Status: ' . $response->status());
+                }
             }
 
         } catch (\Exception $e) {
-            Log::error('Erro ao conectar à API Whois para ' . $this->domain . ': ' . $e->getMessage());
+            Log::error('Erro ao conectar à API Whois para ' . $domain . ': ' . $e->getMessage());
         }
     }
 }

@@ -19,11 +19,16 @@ class LogScanDetail extends Model
         'timestamp',
         'domain',
         'client_ip',
+        'extra',
         'classification',
         'analysis_reason',
     ];
 
     protected $appends = ['classification_label'];
+
+    protected $casts = [
+        'extra' => 'json'
+    ];
 
     public function getClassificationLabelAttribute(): ?string
     {
