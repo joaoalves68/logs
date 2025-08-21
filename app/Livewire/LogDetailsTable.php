@@ -13,7 +13,7 @@ class LogDetailsTable extends DataTableComponent
 
     protected $model = LogScanDetail::class;
 
-    public function mount($logId): void
+    public function mount(int | null $logId): void
     {
         $this->logId = $logId;
     }
@@ -26,6 +26,10 @@ class LogDetailsTable extends DataTableComponent
 
     public function builder(): Builder
     {
+        if (is_null($this->logId)) {
+            return LogScanDetail::query();
+        }
+
         return LogScanDetail::query()
             ->where('log_scan_id', $this->logId)
             ->orderBy('timestamp', 'desc');
@@ -45,9 +49,7 @@ class LogDetailsTable extends DataTableComponent
                 ->sortable(),
             Column::make("Cliente IP", "client_ip")
                 ->sortable(),
-            Column::make("Classificação", "classification")
-                ->sortable(),
-            Column::make("Motivo da Análise", "analysis_reason")
+            Column::make("Classificação", "classification_label")
                 ->sortable(),
         ];
     }

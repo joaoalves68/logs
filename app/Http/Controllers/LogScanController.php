@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\LogScanRequest;
 use App\Models\LogScan;
+use App\Models\LogScanDetail;
 use Illuminate\Support\Str;
 
 class LogScanController extends Controller
@@ -38,12 +39,14 @@ class LogScanController extends Controller
         return redirect()->back()->with('success', 'Dados e arquivo registrados com sucesso!');
     }
 
-    public function show(?LogScan $log = null)
+    public function show(LogScan $log = null)
     {
         if($log) {
             $log->load('details');
         }
 
-        return view('logs.show', compact('log'));
+        $resume = LogScan::generateResume($log);
+
+        return view('logs.show', compact('log', 'resume'));
     }
 }
