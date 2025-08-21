@@ -25,7 +25,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
                     <div class="bg-gray-50 p-6 rounded-2xl shadow-md flex flex-col justify-center items-center transform transition duration-300 hover:scale-105 hover:shadow-xl">
                         <p class="text-sm uppercase tracking-wide font-semibold text-gray-500 mb-1">Total de Logs</p>
-                        <p class="text-6xl font-extrabold text-gray-900 leading-none">1500</p>
+                        <p class="text-6xl font-extrabold text-gray-900 leading-none">{{ $resume['total_logs'] }}</p>
                     </div>
 
                     <div class="bg-gray-50 p-6 rounded-2xl shadow-md flex flex-col items-center justify-center lg:col-span-2 transform transition duration-300 hover:scale-[1.02] hover:shadow-xl">
@@ -50,16 +50,9 @@
                 <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-10">
                     <p class="text-lg font-semibold text-gray-800 mb-4 text-center">Últimos 10 Domínios Maliciosos</p>
                     <div class="flex flex-wrap justify-center gap-3 text-sm text-gray-600">
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">malicious-site1.com</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">phishing-link.net</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">bad-domain.org</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">virus-server.xyz</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">suspicious-app.io</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">fake-update.info</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">spam-domain.co</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">exploit-kit.biz</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">ransom-link.ru</span>
-                        <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">scam-page.top</span>
+                        @foreach ($resume['lastTenMalicious'] as $domain)
+                            <span class="bg-gray-100 px-4 py-2 rounded-full font-medium transition duration-150 hover:bg-red-50 hover:text-red-600">{{ $domain }}</span>
+                        @endforeach
                     </div>
                 </div>
 
@@ -75,7 +68,7 @@
             const data = {
                 labels: ['Seguro', 'Malicioso', 'Neutro'],
                 datasets: [{
-                    data: [90, 5, 5],
+                    data: [{{ $resume['safe']['percentage'] }}, {{ $resume['malicious']['percentage'] }}, {{ $resume['moderate']['percentage'] }}],
                     backgroundColor: ['#4ade80', '#f87171', '#60a5fa'],
                     hoverBackgroundColor: ['#22c55e', '#ef4444', '#3b82f6'],
                     borderWidth: 0,

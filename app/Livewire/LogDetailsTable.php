@@ -45,10 +45,6 @@ class LogDetailsTable extends DataTableComponent
 
             Column::make("Data / Hora", "timestamp")
                 ->sortable(),
-            Column::make("Domínio", "domain")
-                ->sortable(),
-            Column::make("Cliente IP", "client_ip")
-                ->sortable(),
             Column::make("Classificação", "classification")
                 ->sortable()
                 ->format(function($value, $row) {
@@ -72,7 +68,9 @@ class LogDetailsTable extends DataTableComponent
 
                     return "<span class='inline-flex items-center px-2 py-1 rounded-full text-white text-xs font-semibold {$color}'>{$label}</span>";
                 })
-                ->html()
+                ->html(),
+            Column::make("Cliente IP", "client_ip")
+                ->sortable(),
         ];
     }
 }

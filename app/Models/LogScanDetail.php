@@ -37,13 +37,54 @@ class LogScanDetail extends Model
 
     public static function generateResume(LogScan $log = null): array
     {
-        $log = $log?->details ?: new self();
+        if ($log) {
+            $details = $log->details;
+            $totalLogs = $details->count();
+            $classifiedLogs = $details->whereNotNull('classification');
+
+            $maliciousCount = $classifiedLogs->where('classification', 1)->count();
+            $moderateCount = $classifiedLogs->where('classification', 2)->count();
+            $safeCount = $classifiedLogs->where('classification', 3)->count();
+
+            $lastTenMalicious = $details->where('classification', 1)
+                ->sortByDesc('timestamp')
+                ->take(10)
+                ->pluck('domain')
+                ->toArray();
+        } else {
+            $totalLogs = LogScanDetail::count();
+            $classifiedLogsQuery = LogScanDetail::whereNotNull('classification');
+
+            $maliciousCount = (clone $classifiedLogsQuery)->where('classification', 1)->count();
+            $moderateCount = (clone $classifiedLogsQuery)->where('classification', 2)->count();
+            $safeCount = (clone $classifiedLogsQuery)->where('classification', 3)->count();
+
+            $lastTenMalicious = LogScanDetail::where('classification', 1)
+                ->orderByDesc('timestamp')
+                ->limit(10)
+                ->pluck('domain')
+                ->toArray();
+
+            $totalClassified = $classifiedLogsQuery->count() ?: 1;
+        }
+
+        $totalClassified = $log ? $classifiedLogs->count() ?: 1 : $totalClassified;
 
         return [
-            'total_logs' => $log->count() ?? 0,
-            'malicious' => $log->where('classification', 1)->count() ?? 0,
-            'moderate' => $log->where('classification', 2)->count() ?? 0,
-            'safe' => $log->where('classification', 3)->count() ?? 0,
+            'total_logs' => $totalLogs,
+            'malicious' => [
+                'count' => $maliciousCount,
+                'percentage' => round(($maliciousCount / $totalClassified) * 100, 2),
+            ],
+            'moderate' => [
+                'count' => $moderateCount,
+                'percentage' => round(($moderateCount / $totalClassified) * 100, 2),
+            ],
+            'safe' => [
+                'count' => $safeCount,
+                'percentage' => round(($safeCount / $totalClassified) * 100, 2),
+            ],
+            'lastTenMalicious' => $lastTenMalicious,
         ];
     }
 
