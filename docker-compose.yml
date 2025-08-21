@@ -13,6 +13,7 @@ services:
       - .:/var/www/html
     depends_on:
       - mysql
+      - queue-worker
     command: "php artisan serve --host=0.0.0.0 --port=8000"
 
   mysql:
@@ -29,6 +30,18 @@ services:
         MYSQL_PASSWORD: laravel
     volumes:
         - db_data:/var/lib/mysql
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-queue-worker
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    command: sh -c "until nc -z mysql 3306; do echo waiting for mysql; sleep 1; done; php artisan queue:work"
 
 volumes:
   db_data:
