@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'whois' => [
+        'api_key' => env('WHOIS_API_KEY'),
+        'url' => env('WHOIS_API_URL', 'https://www.whoisxmlapi.com/whoisserver/WhoisService'),
+    ]
+
 ];
