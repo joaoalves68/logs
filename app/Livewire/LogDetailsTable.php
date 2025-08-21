@@ -22,6 +22,7 @@ class LogDetailsTable extends DataTableComponent
     {
         $this->setPrimaryKey('id');
         $this->setColumnSelectDisabled();
+        $this->setAdditionalSelects(['log_scan_details.*']);
     }
 
     public function builder(): Builder
@@ -38,10 +39,33 @@ class LogDetailsTable extends DataTableComponent
     public function columns(): array
     {
         return [
-            Column::make("Id", "id")
+            Column::make('ID', 'id')
                 ->hideIf(true),
             Column::make("Log scan id", "log_scan_id")
                 ->hideIf(true),
+
+            Column::make('Detalhes', 'id')
+                ->collapseAlways()
+                ->format(function ($value, $row) {
+                    $classification = (int) $row->classification;
+                    $classificationLabel = match ($classification) {
+                        1 => 'Malicioso',
+                        2 => 'Moderado',
+                        3 => 'Seguro',
+                        default => 'Não processado',
+                    };
+
+                    return "
+                        <div>
+                            <div><strong>Data:</strong> {$row->timestamp}</div>
+                            <div><strong>IP:</strong> {$row->client_ip}</div>
+                            <div><strong>Domínio:</strong> {$row->domain}</div>
+                            <div><strong>Classificação:</strong> {$classificationLabel}</div>
+                            <div><strong>Motivo:</strong> {$row->analysis_reason}</div>
+                        </div>
+                    ";
+                })
+                ->html(),
 
             Column::make("Data / Hora", "timestamp")
                 ->sortable(),
