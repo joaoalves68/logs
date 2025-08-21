@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libjpeg-dev \
     libwebp-dev \
-    libfreetype6-dev\
+    libfreetype6-dev \
     netcat-traditional
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -25,5 +25,9 @@ RUN docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install
 
 EXPOSE 8000

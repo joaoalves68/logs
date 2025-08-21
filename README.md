@@ -14,24 +14,28 @@ Para rodar este projeto, você precisa **obrigatoriamente** ter apenas o **Docke
 Siga estas instruções na ordem exata. Todos os comandos devem ser executados no seu terminal (como PowerShell, Terminal do Mac/Linux ou o terminal do seu VS Code).
 1. **Clone o Repositório:**
     ```bash
-    git clone git@github.com:joaoalves68/logs.git
-    cd logs
+        git clone git@github.com:joaoalves68/logs.git
+        cd logs
     ```
 
 2.  **Copie o Arquivo de Ambiente:**
     ```bash
-    cp .env.example .env
+        cp .env.example .env
     ```
-    *(Opcional: Revise o `.env` para configurações como `APP_PORT`)*
+    *(Opcional: Revise o `.env` para configurações como `APP_PORT`, `OPENAI_API_KEY` e `WHOIS_API_KEY`)*
 
 3.  **Rode esses comandos para buildar o projeto, migrar o banco de dados, instalar dependências etc.:**
     ```bash
-        docker-compose up -d --build
-        docker-compose exec app php artisan migrate --seed
+        docker-compose build
+        docker-compose up -d
         docker-compose exec app npm install
-        docker-compose exec app composer install
+        docker-compose exec app php artisan migrate:fresh --seed
         docker-compose exec app npm run build
     ```
 
 5. **Acesse a Aplicação:**
-    Abra seu navegador e acesse `http://localhost:8000` (ou a porta configurada em `APP_PORT` no seu `.env`).
+    Abra seu navegador e acesse `http://localhost:8000` (ou a porta configurada em `APP_PORT` no seu `.env`)
+    ```bash
+        admin@admin.com
+        1234
+    ```
