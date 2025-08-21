@@ -23,6 +23,8 @@ class LogScanDetail extends Model
         'analysis_reason',
     ];
 
+    protected $appends = ['classification_label'];
+
     public function getClassificationLabelAttribute(): ?string
     {
         return match ($this->classification) {

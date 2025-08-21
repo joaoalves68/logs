@@ -17,7 +17,7 @@ class LogScanRequest extends FormRequest
     {
         return [
             'name' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
             ],

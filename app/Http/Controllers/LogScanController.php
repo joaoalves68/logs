@@ -15,7 +15,7 @@ class LogScanController extends Controller
         $validated = $request->validated();
 
         $data = [
-            'name' => $validated['name'],
+            'name' => $validated['name'] ?? 'Log: '. now()->format('d/m/Y H:i'),
         ];
 
         if ($request->hasFile('file')) {

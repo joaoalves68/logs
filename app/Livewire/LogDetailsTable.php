@@ -6,6 +6,7 @@ use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use App\Models\LogScanDetail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class LogDetailsTable extends DataTableComponent
 {
@@ -13,7 +14,7 @@ class LogDetailsTable extends DataTableComponent
 
     protected $model = LogScanDetail::class;
 
-    public function mount(int | null $logId): void
+    public function mount(int|null|string $logId): void
     {
         $this->logId = $logId;
     }
@@ -26,13 +27,13 @@ class LogDetailsTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        if (is_null($this->logId)) {
-            return LogScanDetail::query();
+        $query = LogScanDetail::query();
+
+        if ($this->logId) {
+            $query->where('log_scan_id', $this->logId);
         }
 
-        return LogScanDetail::query()
-            ->where('log_scan_id', $this->logId)
-            ->orderBy('timestamp', 'desc');
+        return $query;
     }
 
     public function columns(): array
@@ -49,8 +50,30 @@ class LogDetailsTable extends DataTableComponent
                 ->sortable(),
             Column::make("Cliente IP", "client_ip")
                 ->sortable(),
-            Column::make("Classificação", "classification_label")
-                ->sortable(),
+            Column::make("Classificação", "classification")
+                ->sortable()
+                ->format(function($value, $row) {
+                    switch ($value) {
+                        case 1:
+                            $color = 'bg-red-500';
+                            $label = 'Malicioso';
+                            break;
+                        case 2:
+                            $color = 'bg-orange-600';
+                            $label = 'Moderado';
+                            break;
+                        case 3:
+                            $color = 'bg-green-600';
+                            $label = 'Seguro';
+                            break;
+                        default:
+                            $color = 'bg-gray-500';
+                            $label = 'Não processado';
+                    }
+
+                    return "<span class='inline-flex items-center px-2 py-1 rounded-full text-white text-xs font-semibold {$color}'>{$label}</span>";
+                })
+                ->html()
         ];
     }
 }

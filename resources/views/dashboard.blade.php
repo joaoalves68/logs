@@ -18,7 +18,7 @@
                         @csrf
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nome:</label>
-                            <input value="{{ old('name') }}" type="text" id="name" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            <input value="{{ old('name') }}" type="text" id="name" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
                                               focus:ring-indigo-500 focus:border-indigo-500
                                               sm:text-base p-3 placeholder-gray-400
                                               transition duration-150 ease-in-out">
