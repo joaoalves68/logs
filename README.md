@@ -28,9 +28,10 @@ Siga estas instruções na ordem exata. Todos os comandos devem ser executados n
     ```bash
         docker-compose build
         docker-compose up -d
-        docker-compose exec app npm install
         docker-compose exec app php artisan migrate:fresh --seed
+        docker-compose exec app npm install
         docker-compose exec app npm run build
+        docker-compose exec app php artisan queue:work
     ```
 
 5. **Acesse a Aplicação:**

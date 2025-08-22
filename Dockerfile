@@ -8,26 +8,29 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libzip-dev \
     libjpeg-dev \
     libwebp-dev \
     libfreetype6-dev \
-    netcat-traditional
-
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
-
-RUN rm -rf /var/lib/apt/lists/*
+    npm \
+    nodejs
 
 RUN docker-php-ext-configure gd --with-jpeg --with-webp --with-freetype \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo_mysql gd exif bcmath pcntl
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
 
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader --prefer-dist
+
 COPY . .
 
-RUN composer install
+RUN composer dump-autoload --optimize
+
+RUN chown -R www-data:www-data /var/www/html/storage \
+    /var/www/html/bootstrap/cache
 
 EXPOSE 8000
