@@ -10,7 +10,7 @@ class LogScanSeeder extends Seeder
 {
     public function run()
     {
-        LogScan::factory(10)->create()->each(function ($log) {
+        LogScan::factory(10)->create(['user_id' => 1])->each(function ($log) {
             LogScanDetail::factory(rand(20,50))
                 ->create(['log_scan_id' => $log->id]);
         });
