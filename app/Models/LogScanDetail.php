@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class LogScanDetail extends Model
 {
@@ -42,7 +43,13 @@ class LogScanDetail extends Model
 
     public static function generateResume(LogScan $log = null): array
     {
+        $user = Auth::user();
+
         if ($log) {
+            if ($log->user_id !== $user->id) {
+                return [];
+            }
+
             $details = $log->details;
             $totalLogs = $details->count();
             $classifiedLogs = $details->whereNotNull('classification');
@@ -57,14 +64,19 @@ class LogScanDetail extends Model
                 ->pluck('domain')
                 ->toArray();
         } else {
-            $totalLogs = LogScanDetail::count();
-            $classifiedLogsQuery = LogScanDetail::whereNotNull('classification');
+            $detailsQuery = LogScanDetail::whereHas('logScan', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+
+            $totalLogs = $detailsQuery->count();
+            $classifiedLogsQuery = (clone $detailsQuery)->whereNotNull('classification');
 
             $maliciousCount = (clone $classifiedLogsQuery)->where('classification', 1)->count();
             $moderateCount = (clone $classifiedLogsQuery)->where('classification', 2)->count();
             $safeCount = (clone $classifiedLogsQuery)->where('classification', 3)->count();
 
-            $lastTenMalicious = LogScanDetail::where('classification', 1)
+            $lastTenMalicious = (clone $detailsQuery)
+                ->where('classification', 1)
                 ->orderByDesc('timestamp')
                 ->limit(10)
                 ->pluck('domain')
@@ -73,7 +85,7 @@ class LogScanDetail extends Model
             $totalClassified = $classifiedLogsQuery->count() ?: 1;
         }
 
-        $totalClassified = $log ? $classifiedLogs->count() ?: 1 : $totalClassified;
+        $totalClassified = $log ? ($classifiedLogs->count() ?: 1) : $totalClassified;
 
         return [
             'total_logs' => $totalLogs,

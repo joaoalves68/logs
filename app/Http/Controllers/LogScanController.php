@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LogScanRequest;
 use App\Models\LogScan;
 use App\Models\LogScanDetail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class LogScanController extends Controller
@@ -16,6 +17,7 @@ class LogScanController extends Controller
 
         $data = [
             'name' => $validated['name'] ?? 'Log: '. now()->format('d/m/Y H:i'),
+            'user_id' => Auth::user()->id,
         ];
 
         if ($request->hasFile('file')) {

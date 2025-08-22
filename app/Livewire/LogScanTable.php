@@ -8,6 +8,8 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
 use Rappasoft\LaravelLivewireTables\Views\Columns\LinkColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Filters\DateFilter;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class LogScanTable extends DataTableComponent
 {
@@ -22,7 +24,8 @@ class LogScanTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        return $this->model::query()->orderBy('created_at', 'DESC');
+        $user = Auth::user();
+        return $user->logScans()->getQuery()->orderBy('created_at', 'DESC');
     }
 
     public function columns(): array

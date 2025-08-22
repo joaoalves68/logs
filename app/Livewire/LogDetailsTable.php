@@ -8,6 +8,7 @@ use App\Models\LogScanDetail;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 use Rappasoft\LaravelLivewireTables\Views\Filters\DateFilter;
+use Illuminate\Support\Facades\Auth;
 
 class LogDetailsTable extends DataTableComponent
 {
@@ -29,13 +30,18 @@ class LogDetailsTable extends DataTableComponent
 
     public function builder(): Builder
     {
-        $query = $this->model::query();
+        $user = Auth::user();
+
+        $query = LogScanDetail::query()
+            ->whereHas('logScan', function (Builder $q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
 
         if ($this->logId) {
             $query->where('log_scan_id', $this->logId);
         }
 
-        return $query;
+        return $query->orderBy('timestamp', 'DESC');
     }
 
     public function columns(): array
